@@ -7,6 +7,7 @@ import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
+import { FormMessage, Message } from "@/components/form-message";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -20,8 +21,10 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  searchParams,
 }: {
   children: React.ReactNode;
+  searchParams: Message;
 }) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
@@ -43,7 +46,7 @@ export default function RootLayout({
                       <DeployButton />
                     </div>
                   </div>
-                  {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+                  {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth searchParams={searchParams} />}
                 </div>
               </nav>
               <div className="flex flex-col gap-20 max-w-5xl p-5">

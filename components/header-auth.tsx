@@ -4,8 +4,11 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { SignInPopover } from "./auth/sign-in-popover";
+import { SignUpPopover } from "./auth/sign-up-popover";
+import { FormMessage, Message } from "@/components/form-message";
 
-export default async function AuthButton() {
+export default async function AuthButton({ searchParams }: { searchParams: Message }) {
   const {
     data: { user },
   } = await createClient().auth.getUser();
@@ -30,7 +33,7 @@ export default async function AuthButton() {
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >
-              <Link href="/sign-in">Sign in</Link>
+              Sign in
             </Button>
             <Button
               asChild
@@ -39,7 +42,7 @@ export default async function AuthButton() {
               disabled
               className="opacity-75 cursor-none pointer-events-none"
             >
-              <Link href="/sign-up">Sign up</Link>
+              Sign up
             </Button>
           </div>
         </div>
@@ -57,12 +60,8 @@ export default async function AuthButton() {
     </div>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
-        <Link href="/sign-in">Sign in</Link>
-      </Button>
-      <Button asChild size="sm" variant={"default"}>
-        <Link href="/sign-up">Sign up</Link>
-      </Button>
+      <SignInPopover searchParams={searchParams} />
+      <SignUpPopover searchParams={searchParams} />
     </div>
   );
 }
