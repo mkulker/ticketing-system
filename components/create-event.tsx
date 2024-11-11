@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/supabase"; //set up superbase client
+import { printUser } from "@/components/create-event-server"
 
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
@@ -57,14 +58,14 @@ const EventForm = () => {
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
           type="datetime-local"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
           type="number"
@@ -72,7 +73,7 @@ const EventForm = () => {
           value={ticketPrice}
           onChange={(e) => setTicketPrice(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
           type="number"
@@ -80,15 +81,21 @@ const EventForm = () => {
           value={totalTickets}
           onChange={(e) => setTotalTickets(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <textarea
           placeholder="Event Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         ></textarea>
+        {/*}<button
+          type="button"
+          onClick={async () => {await printUser()}}
+          className="bg-blue-500 text-white p-2 rounded-md"
+        >Show Curr User</button>
+        {*/}
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 rounded-md"
@@ -98,6 +105,7 @@ const EventForm = () => {
         </button>
       </form>
     </div>
+    
   );
 };
 
