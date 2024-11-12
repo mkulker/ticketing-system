@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/utils/supabase/client"; 
+import { supabase } from "@/utils/supabase/supabase"; //set up superbase client
 
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
-  const [date, setDate] = useState("");
-  const [ticketPrice, setTicketPrice] = useState("");
-  const [totalTickets, setTotalTickets] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("Hnalding that SUbmit! Oh yeat baybee")
     e.preventDefault();
     setLoading(true);
-    const supabase = createClient();
+
     const { data, error } = await supabase.from("events").insert([
       {
         event_name: eventName,
@@ -25,7 +26,9 @@ const EventForm = () => {
         available_tickets: totalTickets,
         description: description,
       },
-    ]);
+    ]);*/
+
+    
 
     setLoading(false);
 
@@ -34,10 +37,10 @@ const EventForm = () => {
     } else {
       setSuccessMessage("Event submitted successfully!");
       setEventName("");
-      setDate("");
-      setTicketPrice("");
-      setTotalTickets("");
-      setDescription("");
+      setStartTime("");
+      setEndTime("");
+      setLocation("");
+      setDescription(":3");
     }
   };
 
@@ -56,38 +59,43 @@ const EventForm = () => {
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
           type="datetime-local"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
-          type="number"
-          placeholder="Ticket Price"
-          value={ticketPrice}
-          onChange={(e) => setTicketPrice(e.target.value)}
+          type="datetime-local"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
-          type="number"
-          placeholder="Total Tickets"
-          value={totalTickets}
-          onChange={(e) => setTotalTickets(e.target.value)}
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <textarea
           placeholder="Event Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         ></textarea>
+        {/*}<button
+          type="button"
+          onClick={async () => {await printUser()}}
+          className="bg-blue-500 text-white p-2 rounded-md"
+        >Show Curr User</button>
+        {*/}
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 rounded-md"
@@ -97,6 +105,7 @@ const EventForm = () => {
         </button>
       </form>
     </div>
+    
   );
 };
 
