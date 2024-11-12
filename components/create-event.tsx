@@ -1,8 +1,7 @@
-// components/EventForm.tsx
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/utils/supabase/supabase"; //set up superbase client
+import { createClient } from "@/utils/supabase/client"; 
 
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
@@ -16,7 +15,7 @@ const EventForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    const supabase = createClient();
     const { data, error } = await supabase.from("events").insert([
       {
         event_name: eventName,
