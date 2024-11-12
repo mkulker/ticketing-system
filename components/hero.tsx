@@ -5,27 +5,6 @@ import NextLogo from "./next-logo";
 import SupabaseLogo from "./supabase-logo";
 import EventCard from "@/components/event-card";
 import { useState, useEffect } from "react";
-// const events = [
-//   {
-//     title: "Event 1",
-//     date: "2023-10-01",
-//     location: "Location 1",
-//     description: "Description for Event 1",
-//   },
-//   {
-//     title: "Event 2",
-//     date: "2023-10-02",
-//     location: "Location 2",
-//     description: "Description for Event 2",
-//   },
-//     {
-//     title: "Event 2",
-//     date: "2023-10-02",
-//     location: "Location 2",
-//     description: "Description for Event 2",
-//   },
-//   // Add more events as needed
-// ];
 
 export default function Header() {
   const [events, setEvents] = useState<any[]>([]);
@@ -63,10 +42,12 @@ export default function Header() {
         {events.map((event, index) => (
           <EventCard
             key={index}
-            title={event.title}
+            title={event.name}
             date={event.date}
             location={event.location}
             description={event.description}
+            startDate={event.start}  
+            endDate={event.end}
           />
         ))}
       </div>

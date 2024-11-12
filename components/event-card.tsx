@@ -5,15 +5,19 @@ interface EventCardProps {
     date: string;
     location: string;
     description: string;
+    startDate: string;
+    endDate: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ title, date, location, description }) => {
+const EventCard: React.FC<EventCardProps> = ({ title, date, location, description,startDate,endDate }) => {
     return (
         <div className="event-card">
-            <h2>{title}</h2>
+            <p><strong>Name:</strong> {title}</p>
             <p><strong>Date:</strong> {date}</p>
             <p><strong>Location:</strong> {location}</p>
-            <p>{description}</p>
+            <p><strong>Description:</strong> {description}</p>
+            <p><strong>From:</strong> {startDate}</p>
+            <p><strong>To:</strong> {endDate}</p>
         </div>
     );
 };
