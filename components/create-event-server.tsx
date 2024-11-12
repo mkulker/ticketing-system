@@ -29,7 +29,7 @@ export async function submitEvent(event_name: string, event_location: string, ev
             description: event_description,
             start:event_start, end:event_end,
             host_org: event_host,
-            creator_id: null /*user.id*/
+            creator_id: user.id
         })
     return error;
 }
