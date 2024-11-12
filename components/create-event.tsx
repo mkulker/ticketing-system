@@ -46,6 +46,7 @@ const EventForm = () => {
     if (error) {
       console.error("Error submitting event:", error.message);
     } else {
+      console.log("suvcess");
       setSuccessMessage("Event submitted successfully!");
       setEventName("");
       setStartTime("");
