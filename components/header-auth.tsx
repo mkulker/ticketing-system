@@ -5,7 +5,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
-// import {AccountPage} from "@/app/accountpage/page";
+import AccountPage from "@/app/accountpage/page";
 
 export default async function AuthButton() {
   const {
