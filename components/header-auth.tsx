@@ -50,7 +50,7 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+      {/*Hey, {user.email}!*/}
       <form action={signOutAction}>
         <Button type="submit" variant={"outline"}>
           Sign out
@@ -61,9 +61,8 @@ export default async function AuthButton() {
           <Button>Account</Button>
         </PopoverTrigger>
         <PopoverContent>
-          <div className="px-1 py-2">
-            {AccountPage()}
-          </div>
+          <b>Account Info</b>
+          <p>Email: {user == null ? "failed to get user email" : user.email}</p>
         </PopoverContent>
       </Popover>
     </div>

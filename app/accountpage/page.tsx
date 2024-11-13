@@ -10,11 +10,11 @@ const supabase = createClient();
 
 
 export async function AccountPage(){
-    const { data, error } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     return (
         <div>
             <h1 className="text-2xl font-medium">Account Info</h1>
-            <h2 className="text-2xl font-medium">Email: {data.user == null ? "failed to get user email" : data.user.email}</h2>
+            <h2 className="text-2xl font-medium">Email: {user == null ? "failed to get user email" : user.email}</h2>
       </div>
     )
 }
