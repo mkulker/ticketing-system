@@ -5,6 +5,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
+import {AccountPage} from "@/app/accountpage/page";
 
 export default async function AuthButton() {
   const {
@@ -55,14 +56,13 @@ export default async function AuthButton() {
           Sign out
         </Button>
       </form>
-      <Popover placement="right">
+      <Popover placement="bottom-end">
         <PopoverTrigger>
-          <Button>Open Popover</Button>
+          <Button>Account</Button>
         </PopoverTrigger>
         <PopoverContent>
           <div className="px-1 py-2">
-            <div className="text-small font-bold">Popover Content</div>
-            <div className="text-tiny">This is the popover content</div>
+            {AccountPage()}
           </div>
         </PopoverContent>
       </Popover>

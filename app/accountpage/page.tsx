@@ -15,11 +15,6 @@ export async function AccountPage(){
         <div>
             <h1 className="text-2xl font-medium">Account Info</h1>
             <h2 className="text-2xl font-medium">Email: {data.user == null ? "failed to get user email" : data.user.email}</h2>
-            <form action={signOutAction}>
-                <Button type="submit" variant={"outline"}>
-                    Sign out
-                </Button>
-            </form>
       </div>
     )
 }
