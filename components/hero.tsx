@@ -5,6 +5,7 @@ import NextLogo from "./next-logo";
 import SupabaseLogo from "./supabase-logo";
 import EventCard from "@/components/event-card";
 import { useState, useEffect } from "react";
+import { Link } from "lucide-react";
 
 export default function Header() {
   const [events, setEvents] = useState<any[]>([]);
@@ -13,18 +14,18 @@ export default function Header() {
   const fetchEvents = async () => {
 
     try {
-      setLoading(true); // Set loading state to true before fetching data
+      setLoading(true); 
       const { data, error } = await supabase
-        .from('events') // Specify the table name
-        .select('*'); // Select all columns, you can specify specific columns if needed
+        .from('events') 
+        .select('*'); 
 
-      if (error) throw error; // If there's an error, throw it
+      if (error) throw error;
 
-      setEvents(data); // Set the data to state
+      setEvents(data); 
     } catch (error: any) {
-      setError(error.message); // Set error state if any error occurs
+      setError(error.message); 
     } finally {
-      setLoading(false); // Set loading to false when the fetch is done
+      setLoading(false); 
     }
   };
 
@@ -48,6 +49,7 @@ export default function Header() {
             description={event.description}
             startDate={event.start}  
             endDate={event.end}
+            event_id={event.id}
           />
         ))}
       </div>

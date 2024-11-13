@@ -1,6 +1,7 @@
 // userbuysticket/page.tsx
 "use client"
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
 type TicketType = {
@@ -12,7 +13,10 @@ type TicketType = {
 const supabase = createClient();
 
 export default function TicketTypesPage() {
-  const eventId = "3";
+  // const router = useRouter(); // Initialize useRouter
+  // const { eventId } = router.query;
+  // console.log(eventId);
+  const eventId = '17';
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [selectedTicketType, setSelectedTicketType] = useState<string>("");
   const [ticketAmount, setTicketAmount] = useState<number>(1);
