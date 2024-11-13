@@ -56,13 +56,15 @@ export default async function AuthButton() {
           Sign out
         </Button>
       </form>
-      <Popover placement="bottom-end">
+      <Popover placement="bottom-end" color="primary" radius="lg">
         <PopoverTrigger>
           <Button>Account</Button>
         </PopoverTrigger>
         <PopoverContent>
-          <b>Account Info</b>
-          <p>Email: {user == null ? "failed to get user email" : user.email}</p>
+          <div className="px-1 py-2">
+            <b>Account Info</b>
+            <p>Email: {user == null ? "failed to get user email" : user.email}</p>
+          </div>
         </PopoverContent>
       </Popover>
     </div>
