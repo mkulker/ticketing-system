@@ -3,43 +3,62 @@
 
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/supabase"; //set up superbase client
+import { printUser, submitEvent } from "@/components/create-event-server"
+import { submitTicketType,submitTicket } from "./create-ticket-server";
+import { error } from "console";
 
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
-  const [date, setDate] = useState("");
-  const [ticketPrice, setTicketPrice] = useState("");
-  const [totalTickets, setTotalTickets] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const[price, setPrice] = useState(0);
+  const[remaining, setRemaining] = useState(0);
+
+
+  const ticketdesc = 'This is a ticket for the event';
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log("Hnalding that SUbmit! Oh yeat baybee")
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabase.from("events").insert([
-      {
-        event_name: eventName,
-        date: date,
-        ticket_price: ticketPrice,
-        total_tickets: totalTickets,
-        available_tickets: totalTickets,
-        description: description,
-      },
-    ]);
+    const id = await submitEvent(
+      eventName,
+      location,
+      description,
+      new Date(startTime),
+      new Date(endTime),
+      null
+    );
 
-    setLoading(false);
+    const ticket_type_id = await submitTicketType(
+      id,
+      price,
+      remaining,
+      ticketdesc
+    );
 
-    if (error) {
-      console.error("Error submitting event:", error.message);
-    } else {
+    for (let i = remaining; i >0; i--){
+      const error = await submitTicket(
+      ticket_type_id
+    );
+    console.log(error); 
+    }
+    
+    
+      setLoading(false);
+      console.log("suvcess");
       setSuccessMessage("Event submitted successfully!");
       setEventName("");
-      setDate("");
-      setTicketPrice("");
-      setTotalTickets("");
+      setStartTime("");
+      setEndTime("");
+      setLocation("");
       setDescription("");
-    }
+
   };
 
   return (
@@ -57,38 +76,63 @@ const EventForm = () => {
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
           type="datetime-local"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
-          type="number"
-          placeholder="Ticket Price"
-          value={ticketPrice}
-          onChange={(e) => setTicketPrice(e.target.value)}
+          type="datetime-local"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
         <input
-          type="number"
-          placeholder="Total Tickets"
-          value={totalTickets}
-          onChange={(e) => setTotalTickets(e.target.value)}
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         />
+
         <textarea
           placeholder="Event Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 rounded-md"
-          required
+          //required
         ></textarea>
+
+        <input
+          type="number"
+          placeholder="Price"
+          value={price} // This should be state for the price
+          onChange={(e) => setPrice(Number(e.target.value))} // Convert the input value to a number
+          className="border p-2 rounded-md"
+        // required
+        />
+
+        <input
+          type="number"
+          placeholder="Number of Tickets"
+          value={remaining} // This should be state for the price
+          onChange={(e) => setRemaining(Number(e.target.value))} // Convert the input value to a number
+          className="border p-2 rounded-md"
+        // required
+        />
+
+        {/*}<button
+          type="button"
+          onClick={async () => {await printUser()}}
+          className="bg-blue-500 text-white p-2 rounded-md"
+        >Show Curr User</button>
+        {*/}
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 rounded-md"
@@ -98,6 +142,7 @@ const EventForm = () => {
         </button>
       </form>
     </div>
+    
   );
 };
 
