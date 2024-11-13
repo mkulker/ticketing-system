@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/supabase"; //set up superbase client
+import { printUser, submitEvent } from "@/components/create-event-server"
 
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
@@ -17,7 +18,16 @@ const EventForm = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabase.from("events").insert([
+    const error = await submitEvent(
+      eventName,
+      location,
+      description,
+      new Date(startTime),
+      new Date(endTime),
+      null
+    );
+
+    /*const { data, error } = await supabase.from("events").insert([
       {
         event_name: eventName,
         date: date,

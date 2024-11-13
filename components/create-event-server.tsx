@@ -1,9 +1,8 @@
 "use server";
-import { supabase } from "@/utils/supabase/supabase";
 import { signOutAction } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
 
-//const supabasei = createClient()
+const supabase = createClient();
 
 export async function printUser(){
     //const supabase = createClient()

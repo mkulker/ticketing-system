@@ -12,7 +12,7 @@ type TicketType = {
 const supabase = createClient();
 
 export default function TicketTypesPage() {
-  const eventId = "1";
+  const eventId = "3";
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [selectedTicketType, setSelectedTicketType] = useState<string>("");
   const [ticketAmount, setTicketAmount] = useState<number>(1);
