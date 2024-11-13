@@ -43,8 +43,8 @@ export default async function RootLayout({
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                   <div className="flex gap-5 items-center font-semibold">
                     <Link href={"/"}>Home</Link>
-                    {user && <Link href="/venue">Venue Page</Link>}
                     <Link href="/buyTickets">Buy Tickets</Link>
+                    {user && <Link href="/venue">Venue Page</Link>}
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
                 </div>
