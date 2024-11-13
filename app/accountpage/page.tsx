@@ -9,7 +9,7 @@ import { createClient } from "@/utils/supabase/client";
 const supabase = createClient();
 
 
-export async function AccountPage(){
+export default async function AccountPage(){
     const { data: { user } } = await supabase.auth.getUser();
     return (
         <div>
