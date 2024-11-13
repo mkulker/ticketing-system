@@ -2,6 +2,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { useParams } from "next/navigation";
 
 type TicketType = {
   id: number;
@@ -12,7 +13,10 @@ type TicketType = {
 const supabase = createClient();
 
 export default function TicketTypesPage() {
-  const eventId = "3";
+  const url = window.location.href;
+  const strs = url.split("/");
+  const eventId = strs[strs.length-1];
+  console.log(window.location.href);
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [selectedTicketType, setSelectedTicketType] = useState<string>("");
   const [ticketAmount, setTicketAmount] = useState<number>(1);
@@ -127,8 +131,8 @@ export default function TicketTypesPage() {
     }
   };
 
-  if (loading) return <p>Loading ticket types...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <p className="flex justify-center items-center text-3xl">Loading ticket types...</p>;
+  // if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="container mx-auto p-6 max-w-md">
