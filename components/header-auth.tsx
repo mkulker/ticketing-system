@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
 
 export default async function AuthButton() {
   const {
@@ -54,14 +55,17 @@ export default async function AuthButton() {
           Sign out
         </Button>
       </form>
-      <Button
-        asChild
-        size="sm"
-        variant={"default"}
-        disabled
-        className="opacity-75 cursor-none pointer-events-none">
-        <Link href="/accountpage">Account</Link>
-      </Button>
+      <Popover placement="right">
+        <PopoverTrigger>
+          <Button>Open Popover</Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <div className="px-1 py-2">
+            <div className="text-small font-bold">Popover Content</div>
+            <div className="text-tiny">This is the popover content</div>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   ) : (
     <div className="flex gap-2">
