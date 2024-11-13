@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Link from "next/link";
 interface EventCardProps {
     title: string;
     date: string;
@@ -7,10 +7,12 @@ interface EventCardProps {
     description: string;
     startDate: string;
     endDate: string;
+    event_id: number;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ title, date, location, description,startDate,endDate }) => {
+const EventCard: React.FC<EventCardProps> = ({ title, date, location, description,startDate,endDate,event_id }) => {
     return (
+        <Link href={`/buyTickets/${event_id}`}>
         <div className="event-card">
             <p><strong>Name:</strong> {title}</p>
             <p><strong>Date:</strong> {date}</p>
@@ -19,6 +21,7 @@ const EventCard: React.FC<EventCardProps> = ({ title, date, location, descriptio
             <p><strong>From:</strong> {startDate}</p>
             <p><strong>To:</strong> {endDate}</p>
         </div>
+        </Link>
     );
 };
 
