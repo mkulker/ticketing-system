@@ -2,7 +2,8 @@
 "use client"
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type TicketType = {
   id: number;
@@ -12,8 +13,9 @@ type TicketType = {
 };
 const supabase = createClient();
 
-export default function TicketTypesPage() {
-  const url = window.location.href;
+export default  function TicketTypesPage() {
+  const router = useRouter();
+  const [url, setUrl] = useState<string>("");
   const strs = url.split("/");
   const eventId = strs[strs.length-1];
   console.log(window.location.href);
@@ -26,6 +28,7 @@ export default function TicketTypesPage() {
 
   useEffect(() => {
     const fetchTicketTypes = async () => {
+      setUrl(window.location.href);
       try {
         if (!eventId) return;
 
@@ -61,15 +64,18 @@ export default function TicketTypesPage() {
 
     if (!selectedTicketType) {
       setError("Please select a ticket type.");
+      window.alert("Please select a ticket type.");
       return;
     }
 
     if (ticketAmount <= 0) {
       setError("Please enter a valid ticket amount.");
+      window.alert("Please enter a valid ticket amount.");
       return;
     }
 
     if (!userUid) {
+      router.push("/sign-in");
       setError("User is not authenticated.");
       return;
     }
