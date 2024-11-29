@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 type TicketType = {
   id: number;
-  ticket_type: number;
+  type: number;
   description: string;
   price: number;
   remaining: number;
@@ -14,6 +14,12 @@ type TicketType = {
     description: string;
     price: number;
     remaining: number;
+  };
+  event?: {
+    name: string;
+    description: string;
+    location: string;
+    start: string;
   };
 };
 
@@ -67,9 +73,17 @@ export default function TicketTypesPage() {
             throw new Error(ticketTypeError.message);
           }
 
-          console.log("Fetched ticketTypeData:", ticketTypeData);
+          const {data: eventData, error: errorEvent} = await supabase
+            .from('events')
+            .select("*")
+            .eq("id", ticketTypeData.event_id)
+            .single();
 
-          return { ...ticket, ticketType: ticketTypeData };
+          if (errorEvent) { 
+            throw new Error(errorEvent.message);
+          } 
+          
+          return { ...ticket, ticketType: ticketTypeData, event: eventData };
         });
 
         const ticketsWithTypes = await Promise.all(ticketTypesPromises);
@@ -83,6 +97,16 @@ export default function TicketTypesPage() {
 
     fetchTickets();
   }, []);
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -101,7 +125,10 @@ export default function TicketTypesPage() {
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {tickets.map((ticket) => (
             <li key={ticket.id} className="border p-4 rounded-md shadow-md">
-              <p><strong>Description:</strong> {ticket.ticketType?.description}</p>
+              <p><strong>Event:</strong> {ticket.event?.name}</p>
+              <p><strong>Date:</strong> {ticket.event?.start ? formatDate(ticket.event.start) : 'N/A'}</p>
+              <p><strong>Description:</strong> {ticket.event?.description}</p>
+              <p><strong>Ticket Description:</strong> {ticket.ticketType?.description}</p>
               <p><strong>Price:</strong> {ticket.ticketType?.price}</p>
               <p><strong>Remaining:</strong> {ticket.ticketType?.remaining}</p>
             </li>
