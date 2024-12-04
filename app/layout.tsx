@@ -1,7 +1,6 @@
 import DeployButton from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
@@ -45,8 +44,7 @@ export default async function RootLayout({
                     <Link href={"/"}>Home</Link>
                     <Link href="/calendar">Calendar</Link>
                     {user && <Link href="/venue"> Venue Page</Link>}
-                    {user && <Link href={`/myTickets/${user.id}`}> My Tickets</Link>}
-                    <ThemeSwitcher />
+
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
 
