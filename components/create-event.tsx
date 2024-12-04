@@ -61,9 +61,11 @@ const EventForm = () => {
         ticketType.description
       );
 
-      for (let i = 0; i < ticketType.remaining; i++) {
-        await submitTicket(ticketTypeId);
-      }
+      const ticketPromises = Array.from({ length: ticketType.remaining }).map(() =>
+        submitTicket(ticketTypeId)
+      );
+
+      await Promise.all(ticketPromises);
     }
 
     setLoading(false);
