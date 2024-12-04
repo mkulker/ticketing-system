@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Calendar, Badge, BadgeProps, Select } from 'antd';
+import { Calendar, Badge, BadgeProps, Select, DatePicker } from 'antd';
 import { CalendarProps } from 'antd';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -22,7 +22,7 @@ const App: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [mode, setMode] = useState<'month' | 'year'>('month');
+  const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs());
 
   const categories = [
     "Concert",
@@ -65,6 +65,10 @@ const App: React.FC = () => {
     setSelectedCategories(value);
   };
 
+  const handleDateChange = (date: Dayjs) => {
+    setCurrentDate(date);
+  };
+
   const getListData = (value: Dayjs) => {
     const dateString = value.format('YYYY-MM-DD');
     return filteredEvents.filter(event => dayjs(event.start).format('YYYY-MM-DD') === dateString).map(event => ({
@@ -89,26 +93,45 @@ const App: React.FC = () => {
     );
   };
 
-  const onPanelChange = (value: Dayjs, newMode: 'month' | 'year') => {
-    setMode('month'); // Force the mode to stay in 'month'
+  const headerRender = ({ value, type, onChange, onTypeChange }: { value: Dayjs; type: string; onChange: (value: Dayjs) => void; onTypeChange: (type: 'month' | 'year') => void }) => {
+    return (
+      <div style={{ padding: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <DatePicker
+          picker="month"
+          value={currentDate}
+          onChange={(date) => {
+            handleDateChange(date);
+            onChange(date);
+          }}
+          style={{ marginRight: 16 }}
+        />
+        <Select
+          mode="multiple"
+          allowClear
+          placeholder="Select categories"
+          onChange={handleCategoryChange}
+          style={{ width: '200px' }}
+        >
+          {categories.map((category) => (
+            <Option key={category} value={category}>
+              {category}
+            </Option>
+          ))}
+        </Select>
+      </div>
+    );
   };
 
   return (
     <div>
-      <Select
-        mode="multiple"
-        allowClear
-        placeholder="Select categories"
-        onChange={handleCategoryChange}
-        style={{ width: '100%', marginBottom: '20px' }}
-      >
-        {categories.map((category) => (
-          <Option key={category} value={category}>
-            {category}
-          </Option>
-        ))}
-      </Select>
-      <Calendar mode="month" onPanelChange={onPanelChange} cellRender={dateCellRender} />
+      <div style={{ borderRadius: '12px', overflow: 'hidden', color: '#333' }}>
+        <Calendar
+          mode="month"
+          cellRender={dateCellRender}
+          headerRender={headerRender}
+          style={{ backgroundColor: '#f0f0f0', color: '#333' }}
+        />
+      </div>
     </div>
   );
 };
