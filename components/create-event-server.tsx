@@ -17,7 +17,7 @@ export async function printUser(){
     }
 } 
 
-export async function submitEvent(event_name: string, event_location: string, event_description: string, event_start: Date, event_end: Date, event_host: number | null) {
+export async function submitEvent(event_name: string, event_location: string, event_description: string, event_start: Date, event_end: Date, event_host: number | null, event_category: string[]) {
     const { data: {user}} = await createClient().auth.getUser()
     if (user == null){
         throw new Error("You are not logged in!")
@@ -29,7 +29,8 @@ export async function submitEvent(event_name: string, event_location: string, ev
             description: event_description,
             start:event_start, end:event_end,
             host_org: event_host,
-            creator_id: user.id
+            creator_id: user.id,
+            Category:event_category
         }).select("id")  // This selects the ID of the inserted event
         .single();     // This ensures we get a single object instead of an array
             // Check if there was an error in inserting the event
