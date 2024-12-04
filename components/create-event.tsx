@@ -14,14 +14,25 @@ const EventForm = () => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [category, setCategory] = useState<string[]>([]);
 
   const [ticketTypes, setTicketTypes] = useState([
-    { price: 0, remaining: 0, description: "" },
+    { price: "", remaining: "", description: "" },
   ]);
 
+  const categories = [
+    "Concert",
+    "Movie",
+    "Play",
+    "Athletics",
+    "Conference",
+    "Convention",
+    "Other",
+  ];
+
   interface TicketType {
-    price: number;
-    remaining: number;
+    price: string | number;
+    remaining: string | number;
     description: string;
   }
 
@@ -32,12 +43,21 @@ const EventForm = () => {
   };
 
   const addTicketType = () => {
-    setTicketTypes([...ticketTypes, { price: 0, remaining: 0, description: "" }]);
+    setTicketTypes([...ticketTypes, { price: "", remaining: "", description: "" }]);
   };
 
   const removeTicketType = (index: number) => {
     const newTicketTypes = ticketTypes.filter((_, i) => i !== index);
     setTicketTypes(newTicketTypes);
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setCategory([...category, value]);
+    } else {
+      setCategory(category.filter((cat) => cat !== value));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,18 +70,19 @@ const EventForm = () => {
       description,
       new Date(startTime),
       new Date(endTime),
-      null
+      null,
+      category
     );
 
     for (const ticketType of ticketTypes) {
       const ticketTypeId = await submitTicketType(
         eventId,
-        ticketType.price,
-        ticketType.remaining,
+        parseFloat(ticketType.price as string),
+        parseInt(ticketType.remaining as string),
         ticketType.description
       );
 
-      const ticketPromises = Array.from({ length: ticketType.remaining }).map(() =>
+      const ticketPromises = Array.from({ length: parseInt(ticketType.remaining as string) }).map(() =>
         submitTicket(ticketTypeId)
       );
 
@@ -75,7 +96,8 @@ const EventForm = () => {
     setEndTime("");
     setLocation("");
     setDescription("");
-    setTicketTypes([{ price: 0, remaining: 0, description: "" }]);
+    setCategory([]);
+    setTicketTypes([{ price: "", remaining: "", description: "" }]);
   };
 
   return (
@@ -126,6 +148,20 @@ const EventForm = () => {
           className="border p-2 rounded-md"
           required
         />
+        <div>
+          <h3 className="font-semibold text-xl mb-2">Categories</h3>
+          {categories.map((cat) => (
+            <div key={cat} className="flex items-center">
+              <input
+                type="checkbox"
+                value={cat}
+                onChange={handleCategoryChange}
+                className="mr-2"
+              />
+              <label>{cat}</label>
+            </div>
+          ))}
+        </div>
         <div>
           <h3 className="font-semibold text-xl mb-2">Ticket Types</h3>
           {ticketTypes.map((ticketType, index) => (
