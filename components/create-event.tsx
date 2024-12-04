@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/utils/supabase/supabase"; //set up superbase client
-import { printUser, submitEvent } from "@/components/create-event-server"
+import { supabase } from "@/utils/supabase/supabase"; // Set up Supabase client
+import { submitEvent } from "@/components/create-event-server";
+import { submitTicketType, submitTicket } from "./create-ticket-server";
 
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
@@ -13,12 +14,36 @@ const EventForm = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
+  const [ticketTypes, setTicketTypes] = useState([
+    { price: 0, remaining: 0, description: "" },
+  ]);
+
+  interface TicketType {
+    price: number;
+    remaining: number;
+    description: string;
+  }
+
+  const handleTicketTypeChange = (index: number, field: keyof TicketType, value: string | number) => {
+    const newTicketTypes = [...ticketTypes];
+    newTicketTypes[index][field] = value as never;
+    setTicketTypes(newTicketTypes);
+  };
+
+  const addTicketType = () => {
+    setTicketTypes([...ticketTypes, { price: 0, remaining: 0, description: "" }]);
+  };
+
+  const removeTicketType = (index: number) => {
+    const newTicketTypes = ticketTypes.filter((_, i) => i !== index);
+    setTicketTypes(newTicketTypes);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("Hnalding that SUbmit! Oh yeat baybee")
     e.preventDefault();
     setLoading(true);
 
-    const error = await submitEvent(
+    const eventId = await submitEvent(
       eventName,
       location,
       description,
@@ -27,31 +52,27 @@ const EventForm = () => {
       null
     );
 
-    /*const { data, error } = await supabase.from("events").insert([
-      {
-        event_name: eventName,
-        date: date,
-        ticket_price: ticketPrice,
-        total_tickets: totalTickets,
-        available_tickets: totalTickets,
-        description: description,
-      },
-    ]);*/
+    for (const ticketType of ticketTypes) {
+      const ticketTypeId = await submitTicketType(
+        eventId,
+        ticketType.price,
+        ticketType.remaining,
+        ticketType.description
+      );
 
-    
+      for (let i = 0; i < ticketType.remaining; i++) {
+        await submitTicket(ticketTypeId);
+      }
+    }
 
     setLoading(false);
-
-    if (error) {
-      console.error("Error submitting event:", error.message);
-    } else {
-      setSuccessMessage("Event submitted successfully!");
-      setEventName("");
-      setStartTime("");
-      setEndTime("");
-      setLocation("");
-      setDescription(":3");
-    }
+    setSuccessMessage("Event submitted successfully!");
+    setEventName("");
+    setStartTime("");
+    setEndTime("");
+    setLocation("");
+    setDescription("");
+    setTicketTypes([{ price: 0, remaining: 0, description: "" }]);
   };
 
   return (
@@ -69,21 +90,23 @@ const EventForm = () => {
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
           className="border p-2 rounded-md"
-          //required
+          required
         />
         <input
           type="datetime-local"
+          placeholder="Start Time"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
           className="border p-2 rounded-md"
-          //required
+          required
         />
         <input
           type="datetime-local"
+          placeholder="End Time"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
           className="border p-2 rounded-md"
-          //required
+          required
         />
         <input
           type="text"
@@ -91,31 +114,57 @@ const EventForm = () => {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           className="border p-2 rounded-md"
-          //required
+          required
         />
         <textarea
-          placeholder="Event Description"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 rounded-md"
-          //required
-        ></textarea>
-        {/*}<button
-          type="button"
-          onClick={async () => {await printUser()}}
-          className="bg-blue-500 text-white p-2 rounded-md"
-        >Show Curr User</button>
-        {*/}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded-md"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Submit Event"}
+          required
+        />
+        <div>
+          <h3 className="font-semibold text-xl mb-2">Ticket Types</h3>
+          {ticketTypes.map((ticketType, index) => (
+            <div key={index} className="flex flex-col gap-2 mb-4">
+              <input
+                type="number"
+                placeholder="Price"
+                value={ticketType.price}
+                onChange={(e) => handleTicketTypeChange(index, "price", e.target.value)}
+                className="border p-2 rounded-md"
+                required
+              />
+              <input
+                type="number"
+                placeholder="Remaining"
+                value={ticketType.remaining}
+                onChange={(e) => handleTicketTypeChange(index, "remaining", e.target.value)}
+                className="border p-2 rounded-md"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={ticketType.description}
+                onChange={(e) => handleTicketTypeChange(index, "description", e.target.value)}
+                className="border p-2 rounded-md"
+                required
+              />
+              <button type="button" onClick={() => removeTicketType(index)} className="border p-2 rounded-md bg-red-500 text-white">
+                Remove Ticket Type
+              </button>
+            </div>
+          ))}
+          <button type="button" onClick={addTicketType} className="border p-2 rounded-md bg-blue-500 text-white">
+            Add Ticket Type
+          </button>
+        </div>
+        <button type="submit" disabled={loading} className="border p-2 rounded-md bg-green-500 text-white">
+          {loading ? "Creating Event..." : "Create Event"}
         </button>
       </form>
     </div>
-    
   );
 };
 

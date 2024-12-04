@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
+import AccountPage from "@/app/accountpage/page";
 
 export default async function AuthButton() {
   const {
@@ -48,12 +50,23 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+      {/*Hey, {user.email}!*/}
       <form action={signOutAction}>
         <Button type="submit" variant={"outline"}>
           Sign out
         </Button>
       </form>
+      <Popover placement="bottom-end" color="primary" radius="lg">
+        <PopoverTrigger>
+          <Button>Account</Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <div className="px-1 py-2">
+            <b>Account Info</b>
+            <p>Email: {user == null ? "failed to get user email" : user.email}</p>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   ) : (
     <div className="flex gap-2">
