@@ -15,6 +15,10 @@ const EventForm = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [category, setCategory] = useState<string[]>([]);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<{ lat: string, lon: string, display_name: string }[]>([]);
 
   const [ticketTypes, setTicketTypes] = useState([
     { price: "", remaining: "", description: "" },
@@ -60,44 +64,96 @@ const EventForm = () => {
     }
   };
 
+  const handleAddressSearch = async () => {
+    console.log("Search button clicked"); // Debugging step
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+      console.log("Fetch response:", response); // Debugging step
+      const data = await response.json();
+      console.log("Fetch data:", data); // Debugging step
+
+      if (data.length === 0) {
+        setError("Address not found");
+        setSearchResults([]);
+        return;
+      }
+
+      // Clean the search results to only show the address
+      const cleanedResults = data.map((result: { lat: string, lon: string, display_name: string }) => ({
+        lat: result.lat,
+        lon: result.lon,
+        display_name: result.display_name,
+      }));
+
+      setSearchResults(cleanedResults);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching geo coordinates:", error);
+      setError("An error occurred while fetching geo coordinates.");
+      setSearchResults([]);
+    }
+  };
+
+  const handleSelectResult = (result: { lat: string, lon: string, display_name: string }) => {
+    setLocation(result.display_name);
+    setLatitude(parseFloat(result.lat));
+    setLongitude(parseFloat(result.lon));
+    setSearchResults([]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const eventId = await submitEvent(
-      eventName,
-      location,
-      description,
-      new Date(startTime),
-      new Date(endTime),
-      null,
-      category
-    );
+    try {
+      if (latitude === null || longitude === null) {
+        throw new Error("Please search for a valid address.");
+      }
 
-    for (const ticketType of ticketTypes) {
-      const ticketTypeId = await submitTicketType(
-        eventId,
-        parseFloat(ticketType.price as string),
-        parseInt(ticketType.remaining as string),
-        ticketType.description
+      const eventId = await submitEvent(
+        eventName,
+        location,
+        description,
+        new Date(startTime),
+        new Date(endTime),
+        null,
+        category,
+        latitude,
+        longitude
       );
 
-      const ticketPromises = Array.from({ length: parseInt(ticketType.remaining as string) }).map(() =>
-        submitTicket(ticketTypeId)
-      );
+      for (const ticketType of ticketTypes) {
+        const ticketTypeId = await submitTicketType(
+          eventId,
+          parseFloat(ticketType.price as string),
+          parseInt(ticketType.remaining as string),
+          ticketType.description
+        );
 
-      await Promise.all(ticketPromises);
+        const ticketPromises = Array.from({ length: parseInt(ticketType.remaining as string) }).map(() =>
+          submitTicket(ticketTypeId)
+        );
+
+        await Promise.all(ticketPromises);
+      }
+
+      setSuccessMessage("Event submitted successfully!");
+      setEventName("");
+      setStartTime("");
+      setEndTime("");
+      setLocation("");
+      setDescription("");
+      setCategory([]);
+      setLatitude(null);
+      setLongitude(null);
+      setTicketTypes([{ price: "", remaining: "", description: "" }]);
+      setSearchResults([]);
+    } catch (error) {
+      console.error("Error submitting event:", error);
+      setError("An error occurred while submitting the event.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-    setSuccessMessage("Event submitted successfully!");
-    setEventName("");
-    setStartTime("");
-    setEndTime("");
-    setLocation("");
-    setDescription("");
-    setCategory([]);
-    setTicketTypes([{ price: "", remaining: "", description: "" }]);
   };
 
   return (
@@ -106,6 +162,11 @@ const EventForm = () => {
       {successMessage && (
         <div className="bg-green-500 text-white p-4 mb-4 rounded-md">
           {successMessage}
+        </div>
+      )}
+      {error && (
+        <div className="bg-red-500 text-white p-4 mb-4 rounded-md">
+          {error}
         </div>
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -133,14 +194,35 @@ const EventForm = () => {
           className="border p-2 rounded-md"
           required
         />
-        <input
-          type="text"
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="border p-2 rounded-md"
-          required
-        />
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="border p-2 rounded-md flex-grow"
+            required
+          />
+          <button type="button" onClick={handleAddressSearch} className="border p-2 rounded-md bg-blue-500 text-white">
+            Search
+          </button>
+        </div>
+        {searchResults.length > 0 && (
+          <div className="mt-4">
+            <h3 className="font-semibold text-xl mb-2">Search Results</h3>
+            <ul className="border p-2 rounded-md bg-gray-100">
+              {searchResults.map((result, index) => (
+                <li
+                  key={index}
+                  className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded"
+                  onClick={() => handleSelectResult(result)}
+                >
+                  {result.display_name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <textarea
           placeholder="Description"
           value={description}
