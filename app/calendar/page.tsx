@@ -162,13 +162,15 @@ const App: React.FC = () => {
             </Option>
           ))}
         </Select>
-        <Slider
-          min={1}
-          max={100}
-          defaultValue={10}
-          onChange={handleDistanceChange}
-          style={{ width: '200px' }}
-        />
+        <div style={{ width: '200px', marginRight: 16 }}>
+          <label>Distance (km):</label>
+          <Slider
+            min={1}
+            max={100}
+            defaultValue={10}
+            onChange={handleDistanceChange}
+          />
+        </div>
       </div>
     );
   };
