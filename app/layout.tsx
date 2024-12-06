@@ -44,6 +44,7 @@ export default async function RootLayout({
                     <Link href={"/"}>Home</Link>
                     <Link href="/calendar">Calendar</Link>
                     {user && <Link href="/venue"> Create Event</Link>}
+                    {user && <Link href="/editEvents"> Edit Events</Link>}
 
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
