@@ -254,6 +254,7 @@ const EventForm = () => {
           <h3 className="font-semibold text-xl mb-2">Ticket Types</h3>
           {ticketTypes.map((ticketType, index) => (
             <div key={index} className="flex flex-col gap-2 mb-4">
+              <label>Price:</label>
               <input
                 type="number"
                 placeholder="Price"
@@ -263,6 +264,7 @@ const EventForm = () => {
                 className="border p-2 rounded-md"
                 required
               />
+              <label>Allocated Tickets:</label>
               <input
                 type="number"
                 placeholder="Remaining"
@@ -272,6 +274,7 @@ const EventForm = () => {
                 className="border p-2 rounded-md"
                 required
               />
+              <label>Description:</label>
               <input
                 type="text"
                 placeholder="Description"
