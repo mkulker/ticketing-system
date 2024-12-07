@@ -74,7 +74,7 @@ export default function Header() {
         Event Finder
       </p>
       <div>
-      <Input variant="flat" type="text" placeholder="Search" className="border p-1 rounded-md" onChange={e => updateSearch(search => e.target.value)}/>  
+      <Input variant="flat" type="text" placeholder="Search" className="p-0 rounded-md" onChange={e => updateSearch(search => e.target.value)}/>  
         <ButtonGroup size="sm" className="px-3 py-3">
             <Button onPress={e => handleClick(0)} color={f[0] == 0 ? "secondary" : "primary"} radius="full">
                 Concerts
