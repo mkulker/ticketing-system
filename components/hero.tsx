@@ -56,7 +56,7 @@ export default function Header() {
     if(search == "" && JSON.stringify(filter) == JSON.stringify([0, 0, 0, 0, 0, 0, 0])) return true;
     //fix this
     if(event.category == null  && JSON.stringify(filter) != JSON.stringify([0, 0, 0, 0, 0, 0, 0])) return false;
-    if(event.category != null) {
+    if(event.category != null && JSON.stringify(filter) != JSON.stringify([0, 0, 0, 0, 0, 0, 0])) {
       const eventTypes = ["Concert", "Movie", "Play", "Athletics", "Conference", "Convention", "Other"];
       //map through categories
       var fitsCat = false;
