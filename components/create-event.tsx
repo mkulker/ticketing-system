@@ -170,6 +170,7 @@ const EventForm = () => {
         </div>
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <label>Name:</label>
         <input
           type="text"
           placeholder="Event Name"
@@ -178,6 +179,7 @@ const EventForm = () => {
           className="border p-2 rounded-md"
           required
         />
+        <label>Start Time:</label>
         <input
           type="datetime-local"
           placeholder="Start Time"
@@ -186,14 +188,17 @@ const EventForm = () => {
           className="border p-2 rounded-md"
           required
         />
+        <label>End Time:</label>
         <input
           type="datetime-local"
           placeholder="End Time"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
+          min = {startTime}
           className="border p-2 rounded-md"
           required
         />
+        <label>Location:</label>
         <div className="flex gap-2">
           <input
             type="text"
@@ -210,11 +215,11 @@ const EventForm = () => {
         {searchResults.length > 0 && (
           <div className="mt-4">
             <h3 className="font-semibold text-xl mb-2">Search Results</h3>
-            <ul className="border p-2 rounded-md bg-gray-100">
+            <ul className="border p-2 rounded-md bg-gray-100 text-gray-400">
               {searchResults.map((result, index) => (
                 <li
                   key={index}
-                  className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded"
+                  className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded text-gray-400"
                   onClick={() => handleSelectResult(result)}
                 >
                   {result.display_name}
@@ -223,6 +228,7 @@ const EventForm = () => {
             </ul>
           </div>
         )}
+        <label>Description:</label>
         <textarea
           placeholder="Description"
           value={description}
@@ -248,22 +254,27 @@ const EventForm = () => {
           <h3 className="font-semibold text-xl mb-2">Ticket Types</h3>
           {ticketTypes.map((ticketType, index) => (
             <div key={index} className="flex flex-col gap-2 mb-4">
+              <label>Price:</label>
               <input
                 type="number"
                 placeholder="Price"
                 value={ticketType.price}
+                min="0"
                 onChange={(e) => handleTicketTypeChange(index, "price", e.target.value)}
                 className="border p-2 rounded-md"
                 required
               />
+              <label>Allocated Tickets:</label>
               <input
                 type="number"
                 placeholder="Remaining"
                 value={ticketType.remaining}
+                min="1"
                 onChange={(e) => handleTicketTypeChange(index, "remaining", e.target.value)}
                 className="border p-2 rounded-md"
                 required
               />
+              <label>Description:</label>
               <input
                 type="text"
                 placeholder="Description"
@@ -272,9 +283,18 @@ const EventForm = () => {
                 className="border p-2 rounded-md"
                 required
               />
-              <button type="button" onClick={() => removeTicketType(index)} className="border p-2 rounded-md bg-red-500 text-white">
+              <div>
+                {index != 0 && (<button type="button" onClick={() => removeTicketType(index)} disabled={index == 0} className="border p-2 rounded-md bg-red-500 text-white">
                 Remove Ticket Type
-              </button>
+                </button>
+                )}
+              </div>
+              <div>
+                {index == 0 && (<button type="button" onClick={() => removeTicketType(index)} disabled={true} className="border p-2 rounded-md bg-gray-500 text-white">
+                Remove Ticket Type
+                </button>
+                )}
+              </div>
             </div>
           ))}
           <button type="button" onClick={addTicketType} className="border p-2 rounded-md bg-blue-500 text-white">
