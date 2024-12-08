@@ -1,3 +1,4 @@
+"use client";
 import { forgotPasswordAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
@@ -5,12 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { SmtpMessage } from "../smtp-message";
+import { useEffect, useState } from "react";
 
 interface ForgotPasswordProps {
-  searchParams: Message;
+  searchParams?: Message; // Optional prop for message handling
 }
 
 export default function ForgotPassword({ searchParams }: ForgotPasswordProps) {
+  const [message, setMessage] = useState<Message | null>(null);
+
+  useEffect(() => {
+    if (searchParams) {
+      setMessage(searchParams);
+    }
+  }, [searchParams]);
+
   return (
     <>
       <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-64 max-w-64 mx-auto">
@@ -29,7 +39,7 @@ export default function ForgotPassword({ searchParams }: ForgotPasswordProps) {
           <SubmitButton formAction={forgotPasswordAction}>
             Reset Password
           </SubmitButton>
-          <FormMessage message={searchParams} />
+          {message && <FormMessage message={message} />}
         </div>
       </form>
       <SmtpMessage />
