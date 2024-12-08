@@ -70,6 +70,11 @@ export default async function AuthButton() {
                 <Link href={`/myTickets/${user.id}`} className="p-2">My Tickets</Link>
               </Button>
             )}
+            {user && (
+              <Button asChild size="sm" variant={"default"} className="w-full flex justify-start hover:border hover:rounded">
+                <Link href="/editEvents"> Edit Events</Link>
+              </Button>
+            )}
           </div>
         </PopoverContent>
       </Popover>
