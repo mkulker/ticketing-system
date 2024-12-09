@@ -14,14 +14,29 @@ const EventForm = () => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [category, setCategory] = useState<string[]>([]);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<{ lat: string, lon: string, display_name: string }[]>([]);
 
   const [ticketTypes, setTicketTypes] = useState([
-    { price: 0, remaining: 0, description: "" },
+    { price: "", remaining: "", description: "" },
   ]);
 
+  const categories = [
+    "Concert",
+    "Movie",
+    "Play",
+    "Athletics",
+    "Conference",
+    "Convention",
+    "Other",
+  ];
+
   interface TicketType {
-    price: number;
-    remaining: number;
+    price: string | number;
+    remaining: string | number;
     description: string;
   }
 
@@ -32,7 +47,7 @@ const EventForm = () => {
   };
 
   const addTicketType = () => {
-    setTicketTypes([...ticketTypes, { price: 0, remaining: 0, description: "" }]);
+    setTicketTypes([...ticketTypes, { price: "", remaining: "", description: "" }]);
   };
 
   const removeTicketType = (index: number) => {
@@ -40,40 +55,105 @@ const EventForm = () => {
     setTicketTypes(newTicketTypes);
   };
 
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setCategory([...category, value]);
+    } else {
+      setCategory(category.filter((cat) => cat !== value));
+    }
+  };
+
+  const handleAddressSearch = async () => {
+    console.log("Search button clicked"); // Debugging step
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+      console.log("Fetch response:", response); // Debugging step
+      const data = await response.json();
+      console.log("Fetch data:", data); // Debugging step
+
+      if (data.length === 0) {
+        setError("Address not found");
+        setSearchResults([]);
+        return;
+      }
+
+      // Clean the search results to only show the address
+      const cleanedResults = data.map((result: { lat: string, lon: string, display_name: string }) => ({
+        lat: result.lat,
+        lon: result.lon,
+        display_name: result.display_name,
+      }));
+
+      setSearchResults(cleanedResults);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching geo coordinates:", error);
+      setError("An error occurred while fetching geo coordinates.");
+      setSearchResults([]);
+    }
+  };
+
+  const handleSelectResult = (result: { lat: string, lon: string, display_name: string }) => {
+    setLocation(result.display_name);
+    setLatitude(parseFloat(result.lat));
+    setLongitude(parseFloat(result.lon));
+    setSearchResults([]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const eventId = await submitEvent(
-      eventName,
-      location,
-      description,
-      new Date(startTime),
-      new Date(endTime),
-      null
-    );
+    try {
+      if (latitude === null || longitude === null) {
+        throw new Error("Please search for a valid address.");
+      }
 
-    for (const ticketType of ticketTypes) {
-      const ticketTypeId = await submitTicketType(
-        eventId,
-        ticketType.price,
-        ticketType.remaining,
-        ticketType.description
+      const eventId = await submitEvent(
+        eventName,
+        location,
+        description,
+        new Date(startTime),
+        new Date(endTime),
+        null,
+        category,
+        latitude,
+        longitude
       );
 
-      for (let i = 0; i < ticketType.remaining; i++) {
-        await submitTicket(ticketTypeId);
-      }
-    }
+      for (const ticketType of ticketTypes) {
+        const ticketTypeId = await submitTicketType(
+          eventId,
+          parseFloat(ticketType.price as string),
+          parseInt(ticketType.remaining as string),
+          ticketType.description
+        );
 
-    setLoading(false);
-    setSuccessMessage("Event submitted successfully!");
-    setEventName("");
-    setStartTime("");
-    setEndTime("");
-    setLocation("");
-    setDescription("");
-    setTicketTypes([{ price: 0, remaining: 0, description: "" }]);
+        const ticketPromises = Array.from({ length: parseInt(ticketType.remaining as string) }).map(() =>
+          submitTicket(ticketTypeId)
+        );
+
+        await Promise.all(ticketPromises);
+      }
+
+      setSuccessMessage("Event submitted successfully!");
+      setEventName("");
+      setStartTime("");
+      setEndTime("");
+      setLocation("");
+      setDescription("");
+      setCategory([]);
+      setLatitude(null);
+      setLongitude(null);
+      setTicketTypes([{ price: "", remaining: "", description: "" }]);
+      setSearchResults([]);
+    } catch (error) {
+      console.error("Error submitting event:", error);
+      setError("An error occurred while submitting the event.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,7 +164,13 @@ const EventForm = () => {
           {successMessage}
         </div>
       )}
+      {error && (
+        <div className="bg-red-500 text-white p-4 mb-4 rounded-md">
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <label>Name:</label>
         <input
           type="text"
           placeholder="Event Name"
@@ -93,6 +179,7 @@ const EventForm = () => {
           className="border p-2 rounded-md"
           required
         />
+        <label>Start Time:</label>
         <input
           type="datetime-local"
           placeholder="Start Time"
@@ -101,22 +188,47 @@ const EventForm = () => {
           className="border p-2 rounded-md"
           required
         />
+        <label>End Time:</label>
         <input
           type="datetime-local"
           placeholder="End Time"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
+          min = {startTime}
           className="border p-2 rounded-md"
           required
         />
-        <input
-          type="text"
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="border p-2 rounded-md"
-          required
-        />
+        <label>Location:</label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="border p-2 rounded-md flex-grow"
+            required
+          />
+          <button type="button" onClick={handleAddressSearch} className="border p-2 rounded-md bg-blue-500 text-white">
+            Search
+          </button>
+        </div>
+        {searchResults.length > 0 && (
+          <div className="mt-4">
+            <h3 className="font-semibold text-xl mb-2">Search Results</h3>
+            <ul className="border p-2 rounded-md bg-gray-100 text-gray-400">
+              {searchResults.map((result, index) => (
+                <li
+                  key={index}
+                  className="mb-2 cursor-pointer hover:bg-gray-200 p-2 rounded text-gray-400"
+                  onClick={() => handleSelectResult(result)}
+                >
+                  {result.display_name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <label>Description:</label>
         <textarea
           placeholder="Description"
           value={description}
@@ -125,25 +237,44 @@ const EventForm = () => {
           required
         />
         <div>
+          <h3 className="font-semibold text-xl mb-2">Categories</h3>
+          {categories.map((cat) => (
+            <div key={cat} className="flex items-center">
+              <input
+                type="checkbox"
+                value={cat}
+                onChange={handleCategoryChange}
+                className="mr-2"
+              />
+              <label>{cat}</label>
+            </div>
+          ))}
+        </div>
+        <div>
           <h3 className="font-semibold text-xl mb-2">Ticket Types</h3>
           {ticketTypes.map((ticketType, index) => (
             <div key={index} className="flex flex-col gap-2 mb-4">
+              <label>Price:</label>
               <input
                 type="number"
                 placeholder="Price"
                 value={ticketType.price}
+                min="0"
                 onChange={(e) => handleTicketTypeChange(index, "price", e.target.value)}
                 className="border p-2 rounded-md"
                 required
               />
+              <label>Allocated Tickets:</label>
               <input
                 type="number"
                 placeholder="Remaining"
                 value={ticketType.remaining}
+                min="1"
                 onChange={(e) => handleTicketTypeChange(index, "remaining", e.target.value)}
                 className="border p-2 rounded-md"
                 required
               />
+              <label>Description:</label>
               <input
                 type="text"
                 placeholder="Description"
@@ -152,9 +283,18 @@ const EventForm = () => {
                 className="border p-2 rounded-md"
                 required
               />
-              <button type="button" onClick={() => removeTicketType(index)} className="border p-2 rounded-md bg-red-500 text-white">
+              <div>
+                {index != 0 && (<button type="button" onClick={() => removeTicketType(index)} disabled={index == 0} className="border p-2 rounded-md bg-red-500 text-white">
                 Remove Ticket Type
-              </button>
+                </button>
+                )}
+              </div>
+              <div>
+                {index == 0 && (<button type="button" onClick={() => removeTicketType(index)} disabled={true} className="border p-2 rounded-md bg-gray-500 text-white">
+                Remove Ticket Type
+                </button>
+                )}
+              </div>
             </div>
           ))}
           <button type="button" onClick={addTicketType} className="border p-2 rounded-md bg-blue-500 text-white">

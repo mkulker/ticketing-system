@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/popover";
 import AccountPage from "@/app/accountpage/page";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export default async function AuthButton() {
   const {
@@ -60,13 +61,24 @@ export default async function AuthButton() {
         <PopoverTrigger>
           <Button>Account</Button>
         </PopoverTrigger>
-        <PopoverContent>
-          <div className="px-1 py-2">
+        <PopoverContent className="px-3 py-3 rounded-sm">
+          <div className="p-2 text-left">
             <b>Account Info</b>
             <p>Email: {user == null ? "failed to get user email" : user.email}</p>
+            {user && (
+              <Button asChild size="sm" variant={"default"} className="w-full flex justify-start hover:border hover:rounded">
+                <Link href={`/myTickets/${user.id}`} className="p-2">My Tickets</Link>
+              </Button>
+            )}
+            {user && (
+              <Button asChild size="sm" variant={"default"} className="w-full flex justify-start hover:border hover:rounded">
+                <Link href="/editEvents"> Edit Events</Link>
+              </Button>
+            )}
           </div>
         </PopoverContent>
       </Popover>
+      <ThemeSwitcher />
     </div>
   ) : (
     <div className="flex gap-2">

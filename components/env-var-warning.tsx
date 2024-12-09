@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-
+import { ThemeSwitcher } from "./theme-switcher";
 export function EnvVarWarning() {
   return (
     <div className="flex gap-4 items-center">
@@ -27,6 +27,7 @@ export function EnvVarWarning() {
         >
           <Link href="/sign-up">Sign up</Link>
         </Button>
+        <ThemeSwitcher/>   
       </div>
     </div>
   );
