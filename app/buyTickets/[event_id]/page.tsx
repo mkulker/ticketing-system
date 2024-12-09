@@ -144,7 +144,7 @@ export default  function TicketTypesPage() {
     <div className="container mx-auto p-6 max-w-md">
       <h1 className="text-2xl font-bold mb-4">Available Ticket Types</h1>
       {ticketTypes.length === 0 ? (
-        <p>No ticket types available for this event.</p>
+        <p>No tickets needed for this event!</p>
       ) : (
         <ul className="space-y-4">
           {ticketTypes.map((ticket) => (
@@ -157,7 +157,7 @@ export default  function TicketTypesPage() {
         </ul>
       )}
       
-      <div className="mt-8">
+      {ticketTypes.length>0 ? (<div className="mt-8">
         <h2 className="text-lg font-semibold">Purchase Tickets</h2>
         <form
           onSubmit={(e) => {
@@ -202,7 +202,7 @@ export default  function TicketTypesPage() {
           </button>
         </form>
         <p className="mt-4 text-gray-500">User UID: {userUid}</p>
-      </div>
+      </div>) : null}
     </div>
   );
 }
