@@ -177,6 +177,7 @@ const EventForm = () => {
           value={eventName}
           onChange={(e) => setEventName(e.target.value)}
           className="border p-2 rounded-md"
+          maxLength={20}
           required
         />
         <label>Start Time:</label>
@@ -234,6 +235,7 @@ const EventForm = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="border p-2 rounded-md"
+          maxLength={100}
           required
         />
         <div>
@@ -284,13 +286,7 @@ const EventForm = () => {
                 required
               />
               <div>
-                {index != 0 && (<button type="button" onClick={() => removeTicketType(index)} disabled={index == 0} className="border p-2 rounded-md bg-red-500 text-white">
-                Remove Ticket Type
-                </button>
-                )}
-              </div>
-              <div>
-                {index == 0 && (<button type="button" onClick={() => removeTicketType(index)} disabled={true} className="border p-2 rounded-md bg-gray-500 text-white">
+                {(<button type="button" onClick={() => removeTicketType(index)} className="border p-2 rounded-md bg-red-500 text-white">
                 Remove Ticket Type
                 </button>
                 )}
