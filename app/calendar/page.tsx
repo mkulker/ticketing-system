@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { Calendar, Badge, BadgeProps, Select, DatePicker, Slider } from 'antd';
-import { CalendarProps } from 'antd';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { createClient } from '@/utils/supabase/client';
@@ -61,8 +60,6 @@ const App: React.FC = () => {
   }, [userLocation, distance]);
 
   useEffect(() => {
-    // console.log('Events:', events); // Debugging statement
-    // console.log('Filtered events:', filteredEvents); // Debugging statement
     filterEvents(events, selectedCategories);
   }, [selectedCategories, events]);
 
@@ -75,7 +72,7 @@ const App: React.FC = () => {
 
       const filtered = events.filter(event => {
         console.log('Event categories:', event.category);
-        return Array.isArray(event.category) &&   event.category && categories.some(category => event.category.includes(category));
+        return Array.isArray(event.category) && event.category && categories.every(category => event.category.includes(category));
       });
 
       console.log('Filtered events after filtering:', filtered);
@@ -111,6 +108,18 @@ const App: React.FC = () => {
 
   const handleDistanceChange = (value: number) => {
     setDistance(value);
+  };
+
+  const handleDistanceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setDistance(0); // Set to 0 or any default value when input is empty
+    } else {
+      const parsedValue = parseInt(value, 10);
+      if (!isNaN(parsedValue)) {
+        setDistance(parsedValue);
+      }
+    }
   };
 
   const getListData = (value: Dayjs) => {
@@ -162,13 +171,20 @@ const App: React.FC = () => {
             </Option>
           ))}
         </Select>
-        <div style={{ width: '200px', marginRight: 16 }}>
-          <label>Distance (km):</label>
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: 16 }}>
+          <label style={{ marginRight: 8 }}>Distance (km):</label>
+          <input
+            type="number"
+            value={distance}
+            onChange={handleDistanceInputChange}
+            style={{ width: '60px', marginRight: 8, borderRadius: '4px', border: '1px solid #d9d9d9', padding: '2px' }}
+          />
           <Slider
             min={1}
             max={100}
-            defaultValue={10}
+            value={distance}
             onChange={handleDistanceChange}
+            style={{ width: '200px' }}
           />
         </div>
       </div>
@@ -185,13 +201,6 @@ const App: React.FC = () => {
           style={{ backgroundColor: '#f0f0f0', color: '#333' }}
         />
       </div>
-      {userLocation && (
-        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#e0e0e0', borderRadius: '8px' }}>
-          <p><strong>User Location:</strong></p>
-          <p>Latitude: {userLocation.latitude}</p>
-          <p>Longitude: {userLocation.longitude}</p>
-        </div>
-      )}
     </div>
   );
 };
