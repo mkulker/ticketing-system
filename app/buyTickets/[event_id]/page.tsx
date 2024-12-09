@@ -18,7 +18,6 @@ export default  function TicketTypesPage() {
   const [url, setUrl] = useState<string>("");
   const strs = url.split("/");
   const eventId = strs[strs.length-1];
-  console.log(window.location.href);
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [selectedTicketType, setSelectedTicketType] = useState<string>("");
   const [ticketAmount, setTicketAmount] = useState<number>(1);

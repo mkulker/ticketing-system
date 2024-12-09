@@ -65,12 +65,9 @@ const EventForm = () => {
   };
 
   const handleAddressSearch = async () => {
-    console.log("Search button clicked"); // Debugging step
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
-      console.log("Fetch response:", response); // Debugging step
       const data = await response.json();
-      console.log("Fetch data:", data); // Debugging step
 
       if (data.length === 0) {
         setError("Address not found");

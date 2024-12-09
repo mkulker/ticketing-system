@@ -50,7 +50,6 @@ const App: React.FC = () => {
       if (error) {
         console.error('Error fetching events:', error);
       } else {
-        console.log('Fetched events:', data); // Debugging statement
         setEvents(data);
         filterEvents(data, selectedCategories);
       }
@@ -67,15 +66,12 @@ const App: React.FC = () => {
     if (categories.length === 0) {
       setFilteredEvents(events);
     } else {
-      console.log('Selected categories:', categories);
-      console.log('Events before filtering:', events);
+
 
       const filtered = events.filter(event => {
-        console.log('Event categories:', event.category);
         return Array.isArray(event.category) && event.category && categories.every(category => event.category.includes(category));
       });
 
-      console.log('Filtered events after filtering:', filtered);
       setFilteredEvents(filtered);
     }
   };
@@ -185,7 +181,7 @@ const App: React.FC = () => {
             value={distance}
             onChange={handleDistanceChange}
             style={{ width: '200px' }}
-          />
+          />  
         </div>
       </div>
     );
