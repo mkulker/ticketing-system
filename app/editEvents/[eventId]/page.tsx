@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
-const EditEventPage = ({ params }: { params: { eventId: string } }) => {
+const EditEventPage = () => {
 
     const router = useRouter();
     const url = window.location.href;
