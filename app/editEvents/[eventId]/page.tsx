@@ -42,7 +42,7 @@ const EditEventPage = ({ params }: { params: { eventId: string } }) => {
       } else {
         setEventName(data.name || "");
         setDescription(data.description || "");
-        setCategories(data.Category || []);
+        setCategories(data.category || []);
       }
 
       setLoading(false);
@@ -64,7 +64,7 @@ const EditEventPage = ({ params }: { params: { eventId: string } }) => {
 
     const { error } = await supabase
       .from("events")
-      .update({ name: eventName, description, Category: categories })
+      .update({ name: eventName, description, category: categories })
       .eq("id", eventId);
 
     if (error) {
