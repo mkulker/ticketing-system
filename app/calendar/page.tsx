@@ -173,7 +173,14 @@ const App: React.FC = () => {
             type="number"
             value={distance}
             onChange={handleDistanceInputChange}
-            style={{ width: '60px', marginRight: 8, borderRadius: '4px', border: '1px solid #d9d9d9', padding: '2px' }}
+            style={{ 
+              width: '60px', 
+              marginRight: 8, 
+              borderRadius: '4px', 
+              border: '1px solid #d9d9d9', 
+              padding: '2px', 
+              backgroundColor: 'white' // Set background color to white
+            }}
           />
           <Slider
             min={1}
