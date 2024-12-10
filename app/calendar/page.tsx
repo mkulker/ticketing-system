@@ -69,7 +69,7 @@ const App: React.FC = () => {
 
 
       const filtered = events.filter(event => {
-        return Array.isArray(event.category) && event.category && categories.every(category => event.category.includes(category));
+        return Array.isArray(event.category) && event.category && categories.some(category => event.category.includes(category));
       });
 
       setFilteredEvents(filtered);

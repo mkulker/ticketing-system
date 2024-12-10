@@ -52,7 +52,7 @@ const EditEventPage = ({ params }: { params: { eventId: string } }) => {
         // Set the fetched event details to state variables
         setEventName(data.name || "");
         setDescription(data.description || "");
-        setCategories(data.Category || []);
+        setCategories(data.category || []);
       }
       // Set loading to false after fetching event details
       setLoading(false);
@@ -82,7 +82,7 @@ const EditEventPage = ({ params }: { params: { eventId: string } }) => {
       .update({
         name: eventName,
         description,
-        Category: categories,
+        category: categories,
       })
       .eq("id", eventId);
 
