@@ -103,6 +103,13 @@ const EventForm = () => {
     setLoading(true);
 
     try {
+      const now = new Date();
+      const start = new Date(startTime);
+      const end = new Date(endTime);
+
+      if (start < now || end < now) {
+        throw new Error("Event start and end times cannot be in the past.");
+      }
       if (latitude === null || longitude === null) {
         throw new Error("Please search for a valid address.");
       }
@@ -145,9 +152,9 @@ const EventForm = () => {
       setLongitude(null);
       setTicketTypes([{ price: "", remaining: "", description: "" }]);
       setSearchResults([]);
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error submitting event:", error);
-      setError("An error occurred while submitting the event.");
+      setError(error.message);
     } finally {
       setLoading(false);
     }
