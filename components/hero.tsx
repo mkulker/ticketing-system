@@ -37,68 +37,113 @@ export default function Header() {
     fetchEvents();
   }, []);
   
-  function handleClick(a: number) {
-    if(a == 0) updateFilters(f => [(f[0] == 0 ? 1 : 0), f[1], f[2], f[3], f[4], f[5], f[6]]);
-    else if(a == 1) updateFilters(f => [f[0], (f[1] == 0 ? 1 : 0), f[2], f[3], f[4], f[5], f[6]]);
-    else if(a == 2) updateFilters(f => [f[0], f[1], (f[2] == 0 ? 1 : 0), f[3], f[4], f[5], f[6]]);
-    else if(a == 3) updateFilters(f => [f[0], f[1], f[2], (f[3] == 0 ? 1 : 0), f[4], f[5], f[6]]);
-    else if(a == 4) updateFilters(f => [f[0], f[1], f[2], f[3], (f[4] == 0 ? 1 : 0), f[5], f[6]]);
-    else if(a == 5) updateFilters(f => [f[0], f[1], f[2], f[3], f[4], (f[5] == 0 ? 1 : 0), f[6]]);
-    else if(a == 6) updateFilters(f => [f[0], f[1], f[2], f[3], f[4], f[5], (f[6] == 0 ? 1 : 0)]);
+// Function to handle button clicks and update filters
+function handleClick(a: number) {
+  if(a == 0) updateFilters(f => [(f[0] == 0 ? 1 : 0), f[1], f[2], f[3], f[4], f[5], f[6]]);
+  else if(a == 1) updateFilters(f => [f[0], (f[1] == 0 ? 1 : 0), f[2], f[3], f[4], f[5], f[6]]);
+  else if(a == 2) updateFilters(f => [f[0], f[1], (f[2] == 0 ? 1 : 0), f[3], f[4], f[5], f[6]]);
+  else if(a == 3) updateFilters(f => [f[0], f[1], f[2], (f[3] == 0 ? 1 : 0), f[4], f[5], f[6]]);
+  else if(a == 4) updateFilters(f => [f[0], f[1], f[2], f[3], (f[4] == 0 ? 1 : 0), f[5], f[6]]);
+  else if(a == 5) updateFilters(f => [f[0], f[1], f[2], f[3], f[4], (f[5] == 0 ? 1 : 0), f[6]]);
+  else if(a == 6) updateFilters(f => [f[0], f[1], f[2], f[3], f[4], f[5], (f[6] == 0 ? 1 : 0)]);
+}
+
+// Function to handle search input changes
+function handleSearchChange(search: string) {
+  // Update search state or perform search logic here
+}
+
+// Function to check if an event matches the search terms and filters
+function checkTerms(filter: number[], search: string, event: any) {
+  // If no search term and no filters are applied, show all events
+  if(search == "" && JSON.stringify(filter) == JSON.stringify([0, 0, 0, 0, 0, 0, 0])) return true;
+  
+  // If event has no category and filters are applied, hide the event
+  if(event.category == null && JSON.stringify(filter) != JSON.stringify([0, 0, 0, 0, 0, 0, 0])) return false;
+  
+  // If event has categories and filters are applied, check if event fits any category
+  if(event.category != null && JSON.stringify(filter) != JSON.stringify([0, 0, 0, 0, 0, 0, 0])) {
+    const eventTypes = ["Concert", "Movie", "Play", "Athletics", "Conference", "Convention", "Other"];
+    var fitsCat = false;
+    event.category.map((e: any) => fitsCat = fitsCat || (filter[eventTypes.indexOf(e)] != 0));
+    if(!fitsCat) return false;
   }
+  
+  // If search term is not empty, check if event name, description, or location matches the search term
+  if(search != "" && event.name.toLowerCase().indexOf(search.toLowerCase()) == -1 && event.description.toLowerCase().indexOf(search.toLowerCase()) == -1 && event.location.toLowerCase().indexOf(search.toLowerCase()) == -1) return false;
+  
+  // If all checks pass, show the event
+  return true;
+}
 
-  function handleSearchChange(search: string) {
-    
-  }
-
-
-  function checkTerms(filter: number[], search: string, event: any){
-    if(search == "" && JSON.stringify(filter) == JSON.stringify([0, 0, 0, 0, 0, 0, 0])) return true;
-    //fix this
-    if(event.category == null  && JSON.stringify(filter) != JSON.stringify([0, 0, 0, 0, 0, 0, 0])) return false;
-    if(event.category != null && JSON.stringify(filter) != JSON.stringify([0, 0, 0, 0, 0, 0, 0])) {
-      const eventTypes = ["Concert", "Movie", "Play", "Athletics", "Conference", "Convention", "Other"];
-      //map through categories
-      var fitsCat = false;
-      event.category.map((e: any) => fitsCat = fitsCat || (filter[eventTypes.indexOf(e)] != 0));
-      if(!fitsCat) return false;
-    }
-    //if(filter[eventTypes.indexOf(event.category)] == 0) return false;
-    if(search != "" && event.name.toLowerCase().indexOf(search.toLowerCase()) == -1 && event.description.toLowerCase().indexOf(search.toLowerCase()) == -1 && event.location.toLowerCase().indexOf(search.toLowerCase()) == -1) return false;
-    return true;
-  }
-
+// Main component rendering the event finder UI
   return (
-    <div className="flex flex-col gap-8 items-center">
+    <div className="flex flex-col gap-8 items-center ">
       <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
         Event Finder
       </p>
+      <div className="rounded-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"> {/* Responsive width classes */}
+
+      <Input
+        variant="flat"
+        type="text"
+        placeholder="Search"
+        className="p-0 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 w-full"
+        onChange={(e) => updateSearch((search) => e.target.value)}
+      />
+      </div>
       <div>
-      <Input variant="flat" type="text" placeholder="Search" className="p-0 rounded-md" onChange={e => updateSearch(search => e.target.value)}/>  
-        <ButtonGroup size="sm" className="px-3 py-3">
-            <Button onPress={e => handleClick(0)} color={f[0] == 0 ? "secondary" : "primary"} radius="full">
-                Concerts
-            </Button>
-            <Button onPress={e => handleClick(1)} color={f[1] == 0 ? "secondary" : "primary"} radius="full">
-                Movies
-            </Button>
-            <Button onPress={e => handleClick(2)} color={f[2] == 0 ? "secondary" : "primary"} radius="full">
-                Plays
-            </Button>
-            <Button onPress={e => handleClick(3)} color={f[3] == 0 ? "secondary" : "primary"} radius="full">
-                Athletics
-            </Button>
-            <Button onPress={e => handleClick(4)} color={f[4] == 0 ? "secondary" : "primary"} radius="full">
-                Conferences
-            </Button>
-            <Button onPress={e => handleClick(5)} color={f[5] == 0 ? "secondary" : "primary"} radius="full">
-                Conventions
-            </Button>
-            <Button onPress={e => handleClick(6)} color={f[6] == 0 ? "secondary" : "primary"} radius="full">
-                Other
-            </Button>
-        </ButtonGroup>
-        </div>
+      <ButtonGroup size="lg" className="px-4 py-4 rounded-md">
+        <Button
+          onPress={(e) => handleClick(0)}
+          color={f[0] == 0 ? "secondary" : "primary"}
+          className="rounded-l-full text-lg py-3 px-6"
+        >
+          Concerts
+        </Button>
+        <Button
+          onPress={(e) => handleClick(1)}
+          color={f[1] == 0 ? "secondary" : "primary"}
+          className="text-lg py-3 px-6"
+        >
+          Movies
+        </Button>
+        <Button
+          onPress={(e) => handleClick(2)}
+          color={f[2] == 0 ? "secondary" : "primary"}
+          className="text-lg py-3 px-6"
+        >
+          Plays
+        </Button>
+        <Button
+          onPress={(e) => handleClick(3)}
+          color={f[3] == 0 ? "secondary" : "primary"}
+          className="text-lg py-3 px-6"
+        >
+          Athletics
+        </Button>
+        <Button
+          onPress={(e) => handleClick(4)}
+          color={f[4] == 0 ? "secondary" : "primary"}
+          className="text-lg py-3 px-6"
+        >
+          Conferences
+        </Button>
+        <Button
+          onPress={(e) => handleClick(5)}
+          color={f[5] == 0 ? "secondary" : "primary"}
+          className="text-lg py-3 px-6"
+        >
+          Conventions
+        </Button>
+        <Button
+          onPress={(e) => handleClick(6)}
+          color={f[6] == 0 ? "secondary" : "primary"}
+          className="rounded-r-full text-lg py-3 px-6"
+        >
+          Other
+        </Button>
+      </ButtonGroup>        </div>
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
       <div className="flex flex-wrap gap-4 justify-center">
         {events.map((event, index) => (
