@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 describe('Event existence test', () => {
   test('checks if an event already exists in the database', async () => {
 
-    const eventToCheck1 = 'Test Event 1';
+    const eventToCheck1 = 'Demo Event 1';
     const eventToCheck2 = 'eventThatDoesntExist';
 
     // Query the database 

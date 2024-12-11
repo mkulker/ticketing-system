@@ -18,7 +18,8 @@ interface Event {
   latitude: number;
   longitude: number;
 }
-
+// This file is the calendar page
+// This page displays a calendar with events. The user can filter events by category and distance.
 const App: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
@@ -69,7 +70,7 @@ const App: React.FC = () => {
 
 
       const filtered = events.filter(event => {
-        return Array.isArray(event.category) && event.category && categories.every(category => event.category.includes(category));
+        return Array.isArray(event.category) && event.category && categories.some(category => event.category.includes(category));
       });
 
       setFilteredEvents(filtered);
@@ -173,7 +174,14 @@ const App: React.FC = () => {
             type="number"
             value={distance}
             onChange={handleDistanceInputChange}
-            style={{ width: '60px', marginRight: 8, borderRadius: '4px', border: '1px solid #d9d9d9', padding: '2px' }}
+            style={{ 
+              width: '60px', 
+              marginRight: 8, 
+              borderRadius: '4px', 
+              border: '1px solid #d9d9d9', 
+              padding: '2px', 
+              backgroundColor: 'white' // Set background color to white
+            }}
           />
           <Slider
             min={1}

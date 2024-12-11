@@ -13,6 +13,9 @@ type TicketType = {
 };
 const supabase = createClient();
 
+
+//Users are redirected here after clicking on the Event card on the home page. If tickets are available, they can purchase them here.
+
 export default  function TicketTypesPage() {
   const router = useRouter();
   const [url, setUrl] = useState<string>("");

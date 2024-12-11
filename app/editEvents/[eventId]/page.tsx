@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
-
+// This is the edit event page
 const EditEventPage = ({ params }: { params: { eventId: string } }) => {
 
     const router = useRouter();

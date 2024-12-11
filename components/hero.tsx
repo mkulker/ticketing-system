@@ -9,6 +9,8 @@ import { Link } from "lucide-react";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import {Input} from "@nextui-org/react";
 
+// This is the home page of the app, where the user can search for events and filter them by category
+
 export default function Header() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,10 +50,6 @@ function handleClick(a: number) {
   else if(a == 6) updateFilters(f => [f[0], f[1], f[2], f[3], f[4], f[5], (f[6] == 0 ? 1 : 0)]);
 }
 
-// Function to handle search input changes
-function handleSearchChange(search: string) {
-  // Update search state or perform search logic here
-}
 
 // Function to check if an event matches the search terms and filters
 function checkTerms(filter: number[], search: string, event: any) {
@@ -78,18 +76,22 @@ function checkTerms(filter: number[], search: string, event: any) {
 
 // Main component rendering the event finder UI
   return (
-    <div className="flex flex-col gap-8 items-center ">
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        Event Finder
-      </p>
+    <div className="flex flex-col gap-8 items-center">
+      <div className="flex items-center gap-2">
+        <img src="/favicon.ico" alt="Favicon" className="w-20 h-20" /> 
+        <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
+          Event Finder
+        </p>
+
+      </div>
       <div className="rounded-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"> {/* Responsive width classes */}
 
       <Input
         variant="flat"
         type="text"
         placeholder="Search"
-        className="p-0 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 w-full"
-        onChange={(e) => updateSearch((search) => e.target.value)}
+        className="p-0 rounded-md border border-gray-300 focus:outline-none w-full bg-transparent"
+        onChange={(e) => updateSearch(e.target.value)}
       />
       </div>
       <div>

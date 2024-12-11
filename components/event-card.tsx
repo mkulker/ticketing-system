@@ -1,6 +1,9 @@
 import React from 'react';
 import Link from "next/link";
 
+
+//Event card component that displays the event details on the home page
+
 interface EventCardProps {
     title: string;
     date: string;
@@ -12,6 +15,7 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ title, date, location, description, startDate, endDate, event_id }) => {
+    // Function to format the date
     const formatDate = (dateString: string, includeFullDate: boolean = true) => {
         const options: Intl.DateTimeFormatOptions = includeFullDate
             ? { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
@@ -19,6 +23,9 @@ const EventCard: React.FC<EventCardProps> = ({ title, date, location, descriptio
         const date = new Date(dateString);
         return includeFullDate ? date.toLocaleDateString(undefined, options) : date.toLocaleTimeString(undefined, options);
     };
+
+    // Split the location string by commas and remove the last 
+    
 
     return (
         <Link href={`/buyTickets/${event_id}`}>
