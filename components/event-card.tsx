@@ -1,6 +1,9 @@
 import React from 'react';
 import Link from "next/link";
 
+
+//Event card component that displays the event details on the home page
+
 interface EventCardProps {
     title: string;
     date: string;

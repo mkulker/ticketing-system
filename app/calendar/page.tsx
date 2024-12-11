@@ -18,7 +18,8 @@ interface Event {
   latitude: number;
   longitude: number;
 }
-
+// This file is the calendar page
+// This page displays a calendar with events. The user can filter events by category and distance.
 const App: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);

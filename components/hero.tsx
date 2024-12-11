@@ -9,6 +9,8 @@ import { Link } from "lucide-react";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import {Input} from "@nextui-org/react";
 
+// This is the home page of the app, where the user can search for events and filter them by category
+
 export default function Header() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

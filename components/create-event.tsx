@@ -6,6 +6,8 @@ import { supabase } from "@/utils/supabase/supabase"; // Set up Supabase client
 import { submitEvent } from "@/components/create-event-server";
 import { submitTicketType, submitTicket } from "./create-ticket-server";
 
+
+// This page is for creating events where users can pick location, date, time, categories, and ticket types.
 const EventForm = () => {
   const [eventName, setEventName] = useState("");
   const [startTime, setStartTime] = useState("");
