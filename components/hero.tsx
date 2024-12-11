@@ -90,8 +90,8 @@ function checkTerms(filter: number[], search: string, event: any) {
         variant="flat"
         type="text"
         placeholder="Search"
-        className="p-0 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 w-full"
-        onChange={(e) => updateSearch((search) => e.target.value)}
+        className="p-0 rounded-md border border-gray-300 focus:outline-none w-full bg-transparent"
+        onChange={(e) => updateSearch(e.target.value)}
       />
       </div>
       <div>
