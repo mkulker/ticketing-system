@@ -40,7 +40,6 @@ export async function submitEvent(event_name: string, event_location: string, ev
             description: event_description,
             start: event_start,
             end: event_end,
-            host_org: event_host,
             creator_id: user.id,
             category: event_category,
             geopoint: `SRID=4326;POINT(${longitude} ${latitude})` // Insert the geo coordinates as a POINT with SRID 4326

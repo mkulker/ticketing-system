@@ -105,13 +105,6 @@ const EventForm = () => {
     setLoading(true);
 
     try {
-      const now = new Date();
-      const start = new Date(startTime);
-      const end = new Date(endTime);
-
-      if (start < now || end < now) {
-        throw new Error("Event start and end times cannot be in the past.");
-      }
       if (latitude === null || longitude === null) {
         throw new Error("Please search for a valid address.");
       }

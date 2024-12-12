@@ -11,12 +11,15 @@ const supabase = createClient();
 
 interface Event {
   id: number;
+  location:string;
   name: string;
   start: string; // This will be a timestampz from Supabase
   description: string;
+  creator_id: string;
   category: string[]; // Updated to be an array of strings
-  latitude: number;
+  latitude: any;
   longitude: number;
+  
 }
 // This file is the calendar page
 // This page displays a calendar with events. The user can filter events by category and distance.
@@ -49,7 +52,7 @@ const App: React.FC = () => {
       });
 
       if (error) {
-        console.error('Error fetching events:', error);
+        console.error('Error fetching events!:', error);
       } else {
         setEvents(data);
         filterEvents(data, selectedCategories);
